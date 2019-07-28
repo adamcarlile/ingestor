@@ -1,24 +1,61 @@
-# README
+# Ingestor
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This application is designed to listen on the web root for a JSON post, with the following schemas
 
-Things you may want to cover:
+## Events
 
-* Ruby version
+### Envelope
 
-* System dependencies
+All events are wraped in this envelope. Timestamp is set by the client, but the server will set another timestamp when the event is actually `received_at`
 
-* Configuration
+```json
+{
+  "event": "lead",
+  "payload": {},
+  "metadata": {},
+  "created_at": "Timestamp"
+}
+```
 
-* Database creation
+### Lead
 
-* Database initialization
+Assumptions:
+- Email is the unique identifier for an individual, as they may be spotted through several adverts/campaigns/forms
+- After you create this lead, the return payload supplies an `lead_id` that can be used to identify the lead/advert/campaign/form specific combo
+- Sending another lead in with the same email, but different firstname/lastname, will cause the individual to be updated, but the existing event will have the old name
 
-* How to run the test suite
+```json
+{
+  "event": "lead",
+  "payload": {
+    "first_name": "Dave",
+    "last_name": "Smith",
+    "email": "dave.smith@gmail.com",
+    "marketing": {
+      "email": true
+    }
+  },
+  "metadata": {
+    "advert_id": "1234",
+    "campaign_id": "1",
+    "form_id": "1",
+  }
+}
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+### Conversion
 
-* Deployment instructions
-
-* ...
+Assumptions:
+- Conversions are for a specific lead/advers/campaign event
+- 
+```json
+{
+  "event": "conversion",
+  "payload": {
+    "lead_id": "uuid",
+    "type": "string",
+    "value_cents": 1000
+  },
+  "metadata": {}
+}
+```
