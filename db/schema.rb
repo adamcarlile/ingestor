@@ -10,11 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_28_201215) do
+ActiveRecord::Schema.define(version: 2019_07_28_225050) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "conversions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "customer_id"
+    t.uuid "event_id"
+    t.string "kind"
+    t.integer "value_cents", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_conversions_on_customer_id"
+    t.index ["event_id"], name: "index_conversions_on_event_id"
+  end
+
+  create_table "customers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
@@ -23,6 +42,7 @@ ActiveRecord::Schema.define(version: 2019_07_28_201215) do
     t.datetime "client_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "customer_id"
   end
 
 end

@@ -21,7 +21,7 @@ All events are wraped in this envelope. Timestamp is set by the client, but the 
 
 Assumptions:
 - Email is the unique identifier for an individual, as they may be spotted through several adverts/campaigns/forms
-- After you create this lead, the return payload supplies an `lead_id` that can be used to identify the lead/advert/campaign/form specific combo
+- After you create this lead, the return payload supplies an `event_id` that can be used to identify the lead/advert/campaign/form specific combo
 - Sending another lead in with the same email, but different firstname/lastname, will cause the individual to be updated, but the existing event will have the old name
 
 ```json
@@ -59,3 +59,9 @@ Assumptions:
   "metadata": {}
 }
 ```
+
+## Structure
+
+The application is designed to handle and validate the payloads passed in and store them, the actual processing of the event stream to generate some business objects happens in the processors folder.
+
+We use wisper to broadcast the `event_created` event that triggers the processing of the stored event, right now it's done inline, however it would be easy to turn it into an async method.
